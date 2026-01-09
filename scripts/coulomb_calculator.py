@@ -3,7 +3,7 @@
 Compute electrostatic force vectors between point charges.
 """
 
-from math import sqrt
+from math import atan2, pi, sqrt
 
 
 K_COULOMB = 8.9875517923e9  # N·m^2/C^2
@@ -45,6 +45,13 @@ def _vector_sub(a, b):
 
 def _vector_norm(v) -> float:
     return sqrt(sum(component * component for component in v))
+
+
+def _vector_unit(v):
+    magnitude = _vector_norm(v)
+    if magnitude == 0.0:
+        return None
+    return tuple(component / magnitude for component in v)
 
 
 def calculate_force_vector(
@@ -332,6 +339,18 @@ def _print_vector_result(label: str, vector, unit_label: str) -> None:
     print("{} ({}): {}".format(label, unit_label, _format_vector(vector)))
     magnitude = _vector_norm(vector)
     print("{} magnitude ({}): {}".format(label, unit_label, _format_scalar(magnitude)))
+    direction = _vector_unit(vector)
+    if direction is None:
+        print("{} direction: undefined (zero magnitude)".format(label))
+        return
+    print("{} direction (unit vector): {}".format(label, _format_vector(direction)))
+    if len(vector) == 2:
+        angle_deg = atan2(vector[1], vector[0]) * (180.0 / pi)
+        print(
+            "{} direction angle from +x (deg): {}".format(
+                label, _format_scalar(angle_deg)
+            )
+        )
 
 
 def _print_two_charge_summary(
@@ -479,16 +498,34 @@ def main() -> None:
             _print_net_force_summary(target_label, target_charge, target_pos, source_entries)
 
             try:
-                force = calculate_net_force(target_charge, target_pos, sources)
+                contributions = []
+                for label, charge, pos in source_entries:
+                    force_vec = calculate_force_vector(
+                        target_charge, charge, target_pos, pos
+                    )
+                    contributions.append((label, force_vec))
             except ValueError as exc:
-                print("Error: {}".format(exc))
+                print("Error: Source charge {}: {}".format(label, exc))
                 return
+
+            total = [0.0] * len(target_pos)
+            for _, force_vec in contributions:
+                total = [t + f for t, f in zip(total, force_vec)]
+            force = tuple(total)
 
             unit_label, unit_factor = _prompt_force_unit()
             scaled = _scale_vector(force, unit_factor)
             _print_vector_result(
                 "Net force on {}".format(target_label), scaled, unit_label
             )
+            print("Force contributions on {}:".format(target_label))
+            for label, force_vec in contributions:
+                scaled_force = _scale_vector(force_vec, unit_factor)
+                _print_vector_result(
+                    "Force on {} due to {}".format(target_label, label),
+                    scaled_force,
+                    unit_label,
+                )
         else:
             point = _prompt_vector(
                 "Point position ({}) in meters: ".format(axis_labels),
