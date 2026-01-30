@@ -135,6 +135,9 @@ def ask_choice(prompt, options):
         raw = input(prompt).strip()
         if raw in options:
             return raw
+        low = raw.lower()
+        if low in options:
+            return low
         print("Choose: " + ", ".join(options))
 
 
@@ -208,21 +211,41 @@ def banner():
     print("- direction vs potential")
 
 
-def menu():
+def menu_main():
     print("\nMAIN MENU")
     print("A) Potential V")
-    print("  1) V of a point charge")
-    print("  2) Net V from N charges")
-    print("  3) Delta V between two points")
-    print("B) Potential energy / Work")
-    print("  4) U of two charges")
-    print("  5) Delta U from Delta V")
-    print("  6) Work in uniform E")
+    print("B) U / Work")
     print("C) Speed from voltage")
-    print("  7) Speed from potential diff")
-    print("D) Concept checkers")
-    print("  8) Field vs potential reminder")
-    print("  0) Exit")
+    print("D) Concept reminder")
+    print("0) Exit")
+
+
+def menu_potential():
+    print("\nA) Potential V")
+    print(" 1) V of a point charge")
+    print(" 2) Net V from N charges")
+    print(" 3) Delta V between points")
+    print(" 0) Back")
+
+
+def menu_energy():
+    print("\nB) U / Work")
+    print(" 4) U of two charges")
+    print(" 5) Delta U from Delta V")
+    print(" 6) Work in uniform E")
+    print(" 0) Back")
+
+
+def menu_speed():
+    print("\nC) Speed from voltage")
+    print(" 7) Speed from potential diff")
+    print(" 0) Back")
+
+
+def menu_concepts():
+    print("\nD) Concept reminder")
+    print(" 8) Field vs potential")
+    print(" 0) Back")
 
 
 def V_point():
@@ -404,29 +427,53 @@ def concept_reminder():
 def main():
     banner()
     while True:
-        menu()
-        choice = ask_choice("Choose (1-8, 0 exit): ",
-                            ["1", "2", "3", "4",
-                             "5", "6", "7", "8", "0"])
-        if choice == "0":
+        menu_main()
+        top = ask_choice("Choose (A-D, 0 exit): ",
+                         ["a", "b", "c", "d", "0"])
+        if top == "0":
             break
-        if choice == "1":
-            V_point()
-        elif choice == "2":
-            V_net()
-        elif choice == "3":
-            delta_V()
-        elif choice == "4":
-            U_two_charges()
-        elif choice == "5":
-            delta_U_from_V()
-        elif choice == "6":
-            work_uniform_E()
-        elif choice == "7":
+        if top == "a":
+            menu_potential()
+            choice = ask_choice("Choose (1-3, 0 back): ",
+                                ["1", "2", "3", "0"])
+            if choice == "0":
+                continue
+            if choice == "1":
+                V_point()
+            elif choice == "2":
+                V_net()
+            elif choice == "3":
+                delta_V()
+            pause()
+        elif top == "b":
+            menu_energy()
+            choice = ask_choice("Choose (4-6, 0 back): ",
+                                ["4", "5", "6", "0"])
+            if choice == "0":
+                continue
+            if choice == "4":
+                U_two_charges()
+            elif choice == "5":
+                delta_U_from_V()
+            elif choice == "6":
+                work_uniform_E()
+            pause()
+        elif top == "c":
+            menu_speed()
+            choice = ask_choice("Choose (7, 0 back): ",
+                                ["7", "0"])
+            if choice == "0":
+                continue
             speed_from_voltage()
-        elif choice == "8":
+            pause()
+        elif top == "d":
+            menu_concepts()
+            choice = ask_choice("Choose (8, 0 back): ",
+                                ["8", "0"])
+            if choice == "0":
+                continue
             concept_reminder()
-        pause()
+            pause()
 
 
 if __name__ == "__main__":

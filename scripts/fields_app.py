@@ -146,6 +146,9 @@ def ask_choice(prompt, options):
         raw = input(prompt).strip()
         if raw in options:
             return raw
+        low = raw.lower()
+        if low in options:
+            return low
         print("Choose: " + ", ".join(options))
 
 
@@ -219,24 +222,49 @@ def banner():
     print("- direction or sign checks")
 
 
-def menu():
+def menu_main():
     print("\nMAIN MENU")
-    print("A) Point charge tools")
-    print("  1) Coulomb force between two charges")
-    print("  2) E-field from one point charge")
-    print("B) Many charges (superposition)")
-    print("  3) Net E-field at a point (N charges)")
-    print("  4) Net force on one charge (N charges)")
-    print("C) Common continuous shapes")
-    print("  5) Ring on-axis field")
-    print("  6) Disk on-axis field")
-    print("  7) Infinite sheet / plates")
-    print("D) Numerical backup")
-    print("  8) Finite rod (numeric, bisector)")
-    print("E) Concept checkers")
-    print("  9) Direction checker")
-    print(" 10) Superposition reminder")
-    print("  0) Exit")
+    print("A) Point charges (F, E)")
+    print("B) Many charges (superpos)")
+    print("C) Shapes (ring/disk/plates)")
+    print("D) Numerical backup (rod)")
+    print("E) Concepts (dir/rules)")
+    print("0) Exit")
+
+
+def menu_point():
+    print("\nA) Point charges")
+    print(" 1) Coulomb force")
+    print(" 2) E-field from one charge")
+    print(" 0) Back")
+
+
+def menu_many():
+    print("\nB) Many charges")
+    print(" 3) Net E-field at a point")
+    print(" 4) Net force on one charge")
+    print(" 0) Back")
+
+
+def menu_shapes():
+    print("\nC) Shapes")
+    print(" 5) Ring on-axis field")
+    print(" 6) Disk on-axis field")
+    print(" 7) Infinite sheet/plates")
+    print(" 0) Back")
+
+
+def menu_numeric():
+    print("\nD) Numerical backup")
+    print(" 8) Finite rod (numeric)")
+    print(" 0) Back")
+
+
+def menu_concepts():
+    print("\nE) Concepts")
+    print(" 9) Direction checker")
+    print("10) Superposition reminder")
+    print(" 0) Back")
 
 
 def coulomb_force():
@@ -599,34 +627,65 @@ def superposition_reminder():
 def main():
     banner()
     while True:
-        menu()
-        choice = ask_choice("Choose (1-10, 0 exit): ",
-                            ["1", "2", "3", "4", "5",
-                             "6", "7", "8", "9", "10",
-                             "0"])
-        if choice == "0":
+        menu_main()
+        top = ask_choice("Choose (A-E, 0 exit): ",
+                         ["a", "b", "c", "d", "e", "0"])
+        if top == "0":
             break
-        if choice == "1":
-            coulomb_force()
-        elif choice == "2":
-            field_one_charge()
-        elif choice == "3":
-            net_field()
-        elif choice == "4":
-            net_force()
-        elif choice == "5":
-            ring_field()
-        elif choice == "6":
-            disk_field()
-        elif choice == "7":
-            sheet_plates()
-        elif choice == "8":
+        if top == "a":
+            menu_point()
+            choice = ask_choice("Choose (1-2, 0 back): ",
+                                ["1", "2", "0"])
+            if choice == "0":
+                continue
+            if choice == "1":
+                coulomb_force()
+            elif choice == "2":
+                field_one_charge()
+            pause()
+        elif top == "b":
+            menu_many()
+            choice = ask_choice("Choose (3-4, 0 back): ",
+                                ["3", "4", "0"])
+            if choice == "0":
+                continue
+            if choice == "3":
+                net_field()
+            elif choice == "4":
+                net_force()
+            pause()
+        elif top == "c":
+            menu_shapes()
+            choice = ask_choice("Choose (5-7, 0 back): ",
+                                ["5", "6", "7", "0"])
+            if choice == "0":
+                continue
+            if choice == "5":
+                ring_field()
+            elif choice == "6":
+                disk_field()
+            elif choice == "7":
+                sheet_plates()
+            pause()
+        elif top == "d":
+            menu_numeric()
+            choice = ask_choice("Choose (8, 0 back): ",
+                                ["8", "0"])
+            if choice == "0":
+                continue
             rod_numeric()
-        elif choice == "9":
-            direction_checker()
-        elif choice == "10":
-            superposition_reminder()
-        pause()
+            pause()
+        elif top == "e":
+            menu_concepts()
+            choice = ask_choice("Choose (9-10, 0 back): ",
+                                ["9", "10", "0"])
+            if choice == "0":
+                continue
+            if choice == "9":
+                direction_checker()
+            elif choice == "10":
+                superposition_reminder()
+            pause()
 
 
 if __name__ == "__main__":

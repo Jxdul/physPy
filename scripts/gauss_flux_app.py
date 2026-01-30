@@ -137,6 +137,9 @@ def ask_choice(prompt, options):
         raw = input(prompt).strip()
         if raw in options:
             return raw
+        low = raw.lower()
+        if low in options:
+            return low
         print("Choose: " + ", ".join(options))
 
 
@@ -210,22 +213,42 @@ def banner():
     print("- symmetry traps")
 
 
-def menu():
+def menu_main():
     print("\nMAIN MENU")
     print("A) Flux tools")
-    print("  1) Flux in uniform field, flat area")
-    print("  2) Enclosed charge from flux")
-    print("B) Gauss-law solve E")
-    print("  3) Sphere (outside)")
-    print("  4) Infinite line")
-    print("  5) Infinite sheet")
-    print("  6) Parallel plates")
-    print("C) Conductors & cavities")
-    print("  7) Conductor surface field")
-    print("  8) Cavity induced-charge checker")
-    print("D) Gauss applicability checker")
-    print("  9) Can I use Gauss to find E?")
-    print("  0) Exit")
+    print("B) Gauss: solve E")
+    print("C) Conductors/cavities")
+    print("D) Gauss OK? checker")
+    print("0) Exit")
+
+
+def menu_flux():
+    print("\nA) Flux tools")
+    print(" 1) Flux in uniform field")
+    print(" 2) Enclosed charge from flux")
+    print(" 0) Back")
+
+
+def menu_gauss():
+    print("\nB) Gauss solve E")
+    print(" 3) Sphere (outside)")
+    print(" 4) Infinite line")
+    print(" 5) Infinite sheet")
+    print(" 6) Parallel plates")
+    print(" 0) Back")
+
+
+def menu_cond():
+    print("\nC) Conductors/cavities")
+    print(" 7) Conductor surface field")
+    print(" 8) Cavity induced-charge")
+    print(" 0) Back")
+
+
+def menu_check():
+    print("\nD) Gauss applicability")
+    print(" 9) Can I use Gauss to find E?")
+    print(" 0) Back")
 
 
 def flux_uniform():
@@ -418,31 +441,56 @@ def gauss_checker():
 def main():
     banner()
     while True:
-        menu()
-        choice = ask_choice("Choose (1-9, 0 exit): ",
-                            ["1", "2", "3", "4", "5",
-                             "6", "7", "8", "9", "0"])
-        if choice == "0":
+        menu_main()
+        top = ask_choice("Choose (A-D, 0 exit): ",
+                         ["a", "b", "c", "d", "0"])
+        if top == "0":
             break
-        if choice == "1":
-            flux_uniform()
-        elif choice == "2":
-            charge_from_flux()
-        elif choice == "3":
-            sphere_gauss()
-        elif choice == "4":
-            line_gauss()
-        elif choice == "5":
-            sheet_gauss()
-        elif choice == "6":
-            plates_gauss()
-        elif choice == "7":
-            conductor_surface()
-        elif choice == "8":
-            cavity_checker()
-        elif choice == "9":
+        if top == "a":
+            menu_flux()
+            choice = ask_choice("Choose (1-2, 0 back): ",
+                                ["1", "2", "0"])
+            if choice == "0":
+                continue
+            if choice == "1":
+                flux_uniform()
+            elif choice == "2":
+                charge_from_flux()
+            pause()
+        elif top == "b":
+            menu_gauss()
+            choice = ask_choice("Choose (3-6, 0 back): ",
+                                ["3", "4", "5", "6", "0"])
+            if choice == "0":
+                continue
+            if choice == "3":
+                sphere_gauss()
+            elif choice == "4":
+                line_gauss()
+            elif choice == "5":
+                sheet_gauss()
+            elif choice == "6":
+                plates_gauss()
+            pause()
+        elif top == "c":
+            menu_cond()
+            choice = ask_choice("Choose (7-8, 0 back): ",
+                                ["7", "8", "0"])
+            if choice == "0":
+                continue
+            if choice == "7":
+                conductor_surface()
+            elif choice == "8":
+                cavity_checker()
+            pause()
+        elif top == "d":
+            menu_check()
+            choice = ask_choice("Choose (9, 0 back): ",
+                                ["9", "0"])
+            if choice == "0":
+                continue
             gauss_checker()
-        pause()
+            pause()
 
 
 if __name__ == "__main__":

@@ -105,6 +105,9 @@ def ask_choice(prompt, options):
         raw = input(prompt).strip()
         if raw in options:
             return raw
+        low = raw.lower()
+        if low in options:
+            return low
         print("Choose: " + ", ".join(options))
 
 
@@ -178,17 +181,32 @@ def banner():
     print("- acceleration from field")
 
 
-def menu():
+def menu_main():
     print("\nMAIN MENU")
-    print("A) Acceleration from E")
-    print("  1) Acceleration a = (q/m)E")
-    print("B) 1D motion (plates)")
-    print("  2) Time to reach y_target")
-    print("  3) Max y / turning point")
-    print("  4) Impact check with plates")
-    print("C) 2D summary")
-    print("  5) x(t) with constant vx")
-    print("  0) Exit")
+    print("A) Accel from E")
+    print("B) 1D plates (time/max/hit)")
+    print("C) 2D summary (x(t))")
+    print("0) Exit")
+
+
+def menu_accel():
+    print("\nA) Accel from E")
+    print(" 1) a = (q/m)E")
+    print(" 0) Back")
+
+
+def menu_plates():
+    print("\nB) 1D plates")
+    print(" 2) Time to reach y_target")
+    print(" 3) Max y / turning point")
+    print(" 4) Impact check with plates")
+    print(" 0) Back")
+
+
+def menu_2d():
+    print("\nC) 2D summary")
+    print(" 5) x(t) with constant vx")
+    print(" 0) Back")
 
 
 def accel_from_E():
@@ -354,22 +372,40 @@ def x_at_time():
 def main():
     banner()
     while True:
-        menu()
-        choice = ask_choice("Choose (1-5, 0 exit): ",
-                            ["1", "2", "3", "4", "5", "0"])
-        if choice == "0":
+        menu_main()
+        top = ask_choice("Choose (A-C, 0 exit): ",
+                         ["a", "b", "c", "0"])
+        if top == "0":
             break
-        if choice == "1":
+        if top == "a":
+            menu_accel()
+            choice = ask_choice("Choose (1, 0 back): ",
+                                ["1", "0"])
+            if choice == "0":
+                continue
             accel_from_E()
-        elif choice == "2":
-            time_to_target()
-        elif choice == "3":
-            max_height()
-        elif choice == "4":
-            impact_check()
-        elif choice == "5":
+            pause()
+        elif top == "b":
+            menu_plates()
+            choice = ask_choice("Choose (2-4, 0 back): ",
+                                ["2", "3", "4", "0"])
+            if choice == "0":
+                continue
+            if choice == "2":
+                time_to_target()
+            elif choice == "3":
+                max_height()
+            elif choice == "4":
+                impact_check()
+            pause()
+        elif top == "c":
+            menu_2d()
+            choice = ask_choice("Choose (5, 0 back): ",
+                                ["5", "0"])
+            if choice == "0":
+                continue
             x_at_time()
-        pause()
+            pause()
 
 
 if __name__ == "__main__":
